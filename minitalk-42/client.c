@@ -1,47 +1,62 @@
-#include "minitalk.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ylabser <ylabser@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/09 18:49:09 by ylabser           #+#    #+#             */
+/*   Updated: 2025/02/09 18:49:09 by ylabser          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
+#include "minitalk.h"
 
 void send_character(pid_t server_pid, char character)
 {
-    for (int i = 0; i < 8; i++) {
-        if (character & (1 << (7 - i))) {
-            kill(server_pid, SIGUSR1);  // Envoie SIGUSR1 pour bit 1
-        } else {
-            kill(server_pid, SIGUSR2);  // Envoie SIGUSR2 pour bit 0
-        }
-        usleep(100);  // Pause entre les signaux, ajuster la vitesse si nécessaire
+	int	i;
+
+	i = 0;
+    while (i < 8)
+	 {
+        if (character & (1 << (7 - i)))
+            kill(server_pid, SIGUSR1);
+		  else
+            kill(server_pid, SIGUSR2);
+        usleep(100);
+		  i++;
     }
 }
 
 void send_message(pid_t server_pid, const char *message)
 {
-    while (*message) {
-        send_character(server_pid, *message);  // Envoi de chaque caractère
+    while (*message)
+	 {
+        send_character(server_pid, *message);
         message++;
     }
-    send_character(server_pid, '\0');  // Envoi d'un caractère NULL pour signaler la fin du message
+    send_character(server_pid, '\0');
 }
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <PID du serveur> <message>\n", argv[0]);
-        exit(1);
-    }
+	pid_t server_pid;
+	const char *message;
+	int i;
 
-    pid_t server_pid = atoi(argv[1]);
-    const char *message = argv[2];
-
-    // Envoi du message au serveur
-    send_message(server_pid, message);
-   //  printf("Message envoyé : %s\n", message);
-
-    return 0;
+   if (argc != 3)
+      return (write(2, "Invalide message or PID...\n", 28), 1);
+	i = 0;
+	while (argv[1][i])
+	{
+		if (!(argv[1][i] >= '0' && argv[1][i] <= '9'))
+			return (write(2, "pid does not work", 18), 1);
+		i++;
+	}
+   server_pid = ft_atoi(argv[1]);
+	if (kill(server_pid, 0) != 0 || server_pid == 0 || !argv[2][0])
+		return (write(2, "\033[31mpid or string does not work\033[0m", 37), 1);
+   message = argv[2];
+   send_message(server_pid, message);
+   return (0);
 }
-
-
-
