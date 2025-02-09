@@ -1,6 +1,5 @@
 SOURCES = server.c client.c ft_atoi.c
 OBJECTS = $(SOURCES:.c=.o)
-FT_ATOI = ft_atoi.o
 PRINTF  = ./ft_printf/libftprintf.a 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
@@ -14,11 +13,11 @@ bonus: $(SERVER) $(CLIENT)
 $(PRINTF): ./ft_printf/ft_printf.h
 	make -C ft_printf
 
-$(SERVER): server.o $(FT_ATOI) $(PRINTF) minitalk.h
-	$(CC) $(CFLAGS) server.o $(FT_ATOI) $(PRINTF) -o $(SERVER)
+$(SERVER): server.o  $(PRINTF) minitalk.h
+	$(CC) $(CFLAGS) server.o $(PRINTF) -o $(SERVER)
 
-$(CLIENT): client.o $(FT_ATOI) $(PRINTF) minitalk.h
-	$(CC) $(CFLAGS) client.o $(FT_ATOI) $(PRINTF) -o $(CLIENT)
+$(CLIENT): client.o $(PRINTF) minitalk.h
+	$(CC) $(CFLAGS) client.o $(PRINTF) -o $(CLIENT)
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<

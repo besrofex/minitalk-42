@@ -17,6 +17,4 @@
 # include <unistd.h>
 # include "ft_printf/ft_printf.h"
 
-int	ft_atoi(const char *str);
-
 #endif

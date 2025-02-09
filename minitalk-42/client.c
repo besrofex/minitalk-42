@@ -12,51 +12,74 @@
 
 #include "minitalk.h"
 
-void send_character(pid_t server_pid, char character)
+static int	ft_atoi(const char *str)
+{
+	int		i;
+	int		signe;
+	long	res;
+
+	i = 0;
+	signe = 1;
+	res = 0;
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || \
+				str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i++] == '-')
+			signe = signe * -1;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		res = res * 10 + (str[i++] - 48);
+	}
+	if ((signe == 1 && res > 2147483647)
+		|| (signe == -1 && res > 2147483648))
+		return (-100);
+	if (str[i] != '\0')
+		return (-100);
+	return (res * signe);
+}
+
+static void	send_byte(int pid, char c)
 {
 	int	i;
 
-	i = 0;
-    while (i < 8)
-	 {
-        if (character & (1 << (7 - i)))
-            kill(server_pid, SIGUSR1);
-		  else
-            kill(server_pid, SIGUSR2);
-        usleep(100);
-		  i++;
-    }
-}
-
-void send_message(pid_t server_pid, const char *message)
-{
-    while (*message)
-	 {
-        send_character(server_pid, *message);
-        message++;
-    }
-    send_character(server_pid, '\0');
-}
-
-int main(int argc, char *argv[])
-{
-	pid_t server_pid;
-	const char *message;
-	int i;
-
-   if (argc != 3)
-      return (write(2, "Invalide message or PID...\n", 28), 1);
-	i = 0;
-	while (argv[1][i])
+	i = 128;
+	while (i > 0)
 	{
-		if (!(argv[1][i] >= '0' && argv[1][i] <= '9'))
-			return (write(2, "pid does not work", 18), 1);
-		i++;
+		if (c >= i)
+		{
+			kill(pid, SIGUSR2);
+			c -= i;
+		}
+		else
+			kill(pid, SIGUSR1);
+		i /= 2;
+		usleep(300);
 	}
-   server_pid = ft_atoi(argv[1]);
-	if (kill(server_pid, 0) != 0 || server_pid == 0 || !argv[2][0])
-		return (write(2, "\033[31mpid or string does not work\033[0m", 37), 1);
-   message = argv[2];
-   send_message(server_pid, message);
-   return (0);
+}
+
+int	main(int argc, char **argv)
+{
+	int	pid;
+	int	i;
+
+	i = 0;
+	if (argc == 3 && ft_atoi(argv[1]) != -100
+		&& ft_atoi(argv[1]) >= 0 && (kill(ft_atoi(argv[1]), 0) == 0))
+	{
+		pid = ft_atoi(argv[1]);
+		while (argv[2][i] != '\0')
+		{
+			send_byte(pid, argv[2][i]);
+			i++;
+		}
+	}
+	else
+	{
+		ft_printf("Error\n");
+		return (1);
+	}
+	return (0);
 }

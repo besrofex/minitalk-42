@@ -12,43 +12,52 @@
 
 #include "minitalk.h"
 
-static char current_char = 0;
-static int bit_count = 0;
-static int message_received = 0;
-
-void signal_handler(int sig)
+static void	read_byte(int sign, siginfo_t *info, void *context)
 {
-    if (sig == SIGUSR1)
-        current_char |= (1 << (7 - bit_count));
-    bit_count++;
-    if (bit_count == 8)
-	 {
-        if (current_char == '\0')
-		  {
-            message_received = 1;
-            write(1, "\n", 1);
-        }
-		  else
-            ft_printf("%c", current_char);
-        current_char = 0;
-        bit_count = 0;
-    }
+	static char	c = 0;
+	static int	bit = 128;
+	static int	current_client = 0;
+
+	(void)context;
+	if (current_client == 0)
+		current_client = info->si_pid;
+	if (current_client != info->si_pid)
+	{
+		ft_printf("\n");
+		current_client = info->si_pid;
+		c = 0;
+		bit = 128;
+	}
+	if (sign == SIGUSR2)
+		c += bit;
+	bit /= 2;
+	if (bit == 0)
+	{
+		ft_printf("%c", c);
+		c = 0;
+		bit = 128;
+	}
 }
 
-int main()
+int	main(int argc, char **argv)
 {
-    struct sigaction sa;
+	struct sigaction	sa;
+	int					pid;
 
-    ft_printf("Serveur lancé avec le PID : %d\n", getpid());
-    sa.sa_flags = 0;
-    sa.sa_handler = signal_handler;
-    if (sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1)
-        return (write(2, "Erreur avec sigaction.\n", 24), 1);
-    while (1)
-	 {
-        while (!message_received)
-            pause();
-        message_received = 0;
-    }
-    return 0;
+	(void)argv;
+	if (argc != 1)
+	{
+		ft_printf("Error\n");
+		return (1);
+	}
+	sa.sa_sigaction = read_byte;
+	sa.sa_flags = SA_SIGINFO;
+	sigemptyset(&sa.sa_mask);
+	pid = getpid();
+	ft_printf("%d\n", pid);
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
+	while (1)
+		pause();
+	return (0);
 }
