@@ -1,34 +1,38 @@
-SOURCES = server.c client.c ft_atoi.c
-OBJECTS = $(SOURCES:.c=.o)
-PRINTF  = ./ft_printf/libftprintf.a 
+NAMEC = client
+NAMES = server
+PRINTF = libftprintf.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
-SERVER = server
-CLIENT = client
+CFLAGS = -Wall -Werror -Wextra
+INCLUDE = -I minitalk.h
+RM = rm -rf
+PRINTF_DIR = ft_printf/
 
-all: $(SERVER) $(CLIENT)
+SRCC = client.c
+SRCS = server.c
 
-bonus: $(SERVER) $(CLIENT)
+OBJC = $(SRCC:.c=.o)
+OBJS = $(SRCS:.c=.o)
 
-$(PRINTF): ./ft_printf/ft_printf.h
-	make -C ft_printf
+all: $(PRINTF) $(NAMEC) $(NAMES)
 
-$(SERVER): server.o  $(PRINTF) minitalk.h
-	$(CC) $(CFLAGS) server.o $(PRINTF) -o $(SERVER)
+$(PRINTF):
+	@make -C $(PRINTF_DIR)
 
-$(CLIENT): client.o $(PRINTF) minitalk.h
-	$(CC) $(CFLAGS) client.o $(PRINTF) -o $(CLIENT)
+$(NAMEC): $(OBJC) minitalk.h
+	$(CC) $(CFLAGS) $(OBJC) $(PRINTF_DIR)$(PRINTF) -o $(NAMEC)
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) $<
+$(NAMES): $(OBJS) minitalk.h
+	$(CC) $(CFLAGS) $(OBJS) $(PRINTF_DIR)$(PRINTF) -o $(NAMES)
+
+%.o: %.c minitalk.h
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS)
-	make -C ft_printf clean
-	
+	@make clean -C $(PRINTF_DIR)
+	$(RM) $(OBJC) $(OBJS)
+
 fclean: clean
-	rm -f $(SERVER) $(CLIENT) $(PRINTF)
+	@make fclean -C $(PRINTF_DIR)
+	$(RM) $(NAMEC) $(NAMES)
 
 re: fclean all
-
-.PHONY: clean fclean re bonus $(PRINTF)
