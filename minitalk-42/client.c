@@ -12,7 +12,7 @@
 
 #include "minitalk.h"
 
-static int	ft_atoi(const char *str)
+static int	ft_atoi(const char *str) /// check long long 
 {
 	int		i;
 	int		signe;
@@ -56,7 +56,8 @@ static void	send_byte(int pid, char c)
 		else
 			kill(pid, SIGUSR1);
 		i /= 2;
-		usleep(300);
+		usleep(200);
+		usleep(200);
 	}
 }
 

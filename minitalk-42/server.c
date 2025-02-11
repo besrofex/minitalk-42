@@ -23,7 +23,7 @@ static void	read_byte(int sign, siginfo_t *info, void *context)
 		current_client = info->si_pid;
 	if (current_client != info->si_pid)
 	{
-		ft_printf("\n");
+		// ft_printf("\n");
 		current_client = info->si_pid;
 		c = 0;
 		bit = 128;
@@ -39,7 +39,7 @@ static void	read_byte(int sign, siginfo_t *info, void *context)
 	}
 }
 
-int	main(int argc, char **argv)
+int	main(int argc, char **argv) // check relink.........
 {
 	struct sigaction	sa;
 	int					pid;
@@ -52,7 +52,7 @@ int	main(int argc, char **argv)
 	}
 	sa.sa_sigaction = read_byte;
 	sa.sa_flags = SA_SIGINFO;
-	sigemptyset(&sa.sa_mask);
+	sigemptyset(&sa.sa_mask);//test..........
 	pid = getpid();
 	ft_printf("%d\n", pid);
 	sigaction(SIGUSR1, &sa, NULL);

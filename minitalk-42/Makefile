@@ -1,7 +1,7 @@
 SOURCES = server.c client.c ft_atoi.c
 OBJECTS = $(SOURCES:.c=.o)
 PRINTF  = ./ft_printf/libftprintf.a 
-CC = gcc
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
 SERVER = server
 CLIENT = client
