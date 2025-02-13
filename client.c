@@ -12,7 +12,7 @@
 
 #include "minitalk.h"
 
-static int	ft_atoi(const char *str) /// check long long 
+static int	ft_atoi(const char *str)
 {
 	int		i;
 	int		signe;

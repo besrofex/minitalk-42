@@ -39,7 +39,7 @@ static void	read_byte(int sign, siginfo_t *info, void *context)
 	}
 }
 
-int	main(int argc, char **argv) // check relink.........
+int	main(int argc, char **argv)
 {
 	struct sigaction	sa;
 	int					pid;
