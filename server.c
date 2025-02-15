@@ -23,7 +23,6 @@ static void	read_byte(int sign, siginfo_t *info, void *context)
 		current_client = info->si_pid;
 	if (current_client != info->si_pid)
 	{
-		// ft_printf("\n");
 		current_client = info->si_pid;
 		c = 0;
 		bit = 128;
@@ -52,7 +51,7 @@ int	main(int argc, char **argv)
 	}
 	sa.sa_sigaction = read_byte;
 	sa.sa_flags = SA_SIGINFO;
-	sigemptyset(&sa.sa_mask);//test..........
+	sigemptyset(&sa.sa_mask);
 	pid = getpid();
 	ft_printf("%d\n", pid);
 	sigaction(SIGUSR1, &sa, NULL);
