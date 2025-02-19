@@ -1,9 +1,9 @@
 NAMEC = client
 NAMES = server
 PRINTF = libftprintf.a
+
 CC = cc
 CFLAGS = -Wall -Werror -Wextra
-INCLUDE = -I minitalk.h
 RM = rm -rf
 PRINTF_DIR = ft_printf/
 
@@ -25,7 +25,7 @@ $(NAMES): $(OBJS) minitalk.h
 	$(CC) $(CFLAGS) $(OBJS) $(PRINTF_DIR)$(PRINTF) -o $(NAMES)
 
 %.o: %.c minitalk.h
-	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	@make clean -C $(PRINTF_DIR)
@@ -36,3 +36,4 @@ fclean: clean
 	$(RM) $(NAMEC) $(NAMES)
 
 re: fclean all
+.PHONY : clean
